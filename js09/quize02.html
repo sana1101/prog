@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+<title>クイズ練習（複数）</title>
+</head>
+<body>
+
+<header>
+    <h1>クイズ</h1>
+    <h2>第1問</h2>
+</header>
+
+<main>
+  <p id="quest">ここに問題が出題されます</p>
+  <p>
+    <input type="radio" name="toi" value="1"><span id="toi1">選択肢１</span>
+    <input type="radio" name="toi" value="2"><span id="toi2">選択肢２</span>
+    <input type="radio" name="toi" value="3"><span id="toi3">選択肢３</span>
+  </p>
+
+  <div id="log"></div>
+</main>
+
+<footer>フッター</footer>
+<script>
+//ここから記述領域［START］
+
+  //以下に配列を記述してください。
+  //問題文[配列]
+const qs=[
+  "通るときには閉まって、通らないときには開いているものは何？",
+  "話すことがとても好きな道具は何？",
+  "世界の真ん中にいる虫は何？",
+  "どんなに頼んでも、売ってくれない人のお仕事は？",
+  "笑っている人しかいないお店は？",
+  "かんたんに動かせるけど、ぜったいもちあげられないものは？"
+];
+    
+  //回答選択肢[多重配列]
+const toi=[
+  ["踏み切り","洗濯機","冷蔵庫"],
+  ["スプーン","シャベル","しゃもじ"],
+  ["てんとう虫","カマキリ","蚊"],
+  ["占い師","教師","詐欺師"],
+  ["薬屋","コンビニ","洋服屋"],
+  ["星","影","水"]
+];
+    
+  //答え[配列]
+const ans=[1,2,3,1,1,2];
+
+//正解数記録
+let cor=0;
+
+//問題数
+const now=[ "第1問","第2問","第3問","第4問","第5問","第6問"];
+
+  //1.最初の問題文＆回答選択肢＆回答値を設定
+let i=0;
+$("#quest").text( qs[i] );
+$("#toi1").text( toi[i][0] );
+$("#toi2").text( toi[i][1] );
+$("#toi3").text( toi[i][2] );
+
+  //2.ラジオボタンをクリックしたらイベント発生！(クリックイベント)
+$("[name=toi]").on("click",function(){
+    const v=$(this).val(); //this=#size 一緒
+    if(ans[i]==v){
+      $("h1").text("正解");
+      cor++;
+    
+    }else{
+      $("h1").text("不正解");
+    }
+
+    i++;
+  
+
+    if(i==qs.length){
+
+      alert("終了！");
+      $("#quest").text("正解数は"+cor+"問");
+      $("h1").text("結果発表");
+
+      if(cor==6){
+       $("h2").text("すごい！全問正解");
+      }
+
+      if(cor==4 || cor==5){
+       $("h2").text("おしい！あともう少しだ");
+      }
+
+      if(cor<4){
+       $("h2").text("もう一回頑張ろう！");
+      }
+
+      $("#toi1").text("" );
+      $("#toi2").text( "");
+      $("#toi3").text( "");
+    
+    }else{
+      $("h2").text( now[i]);
+      $("#quest").text( qs[i] );
+      $("#toi1").text( toi[i][0] );
+      $("#toi2").text( toi[i][1] );
+      $("#toi3").text( toi[i][2] );
+
+    }
+});
+
+//正解の文
+
+
+//タイマー
+const totalTime = 10000;
+const oldTime = Date.now();
+const timeId = setInterval(() => {
+const currentTime = Date.now();
+// 差分を求める
+  const diff = currentTime - oldTime;
+  const diffSec = totalTime - diff;
+//ミリ秒を整数に変換
+  const remainSec = Math.ceil(diffSec / 1000);
+  let text = `残り${remainSec}秒`;
+
+  if(i==qs.length){
+    return;
+  }
+  
+// 0秒以下になったら
+  if (diffSec <= 0) {
+    clearInterval(timeId);
+    cor-=1;
+    text = "マイナス１点";
+  }
+
+  document.querySelector('#log').innerHTML = text;
+})
+
+//css
+$("#log").css("color","red");
+
+
+//ここまでが記述領域［END］
+</script>
+</body>
+</html>
