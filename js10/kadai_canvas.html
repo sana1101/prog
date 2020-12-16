@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>canvas_base.html</title>
+</head>
+<style>
+h1{
+    color: rgb(218, 182, 116);
+    text-align: center;
+    font-size: 50px;
+}
+
+body{
+    background-image: url("forest.jpg");
+}
+
+</style>
+<body>
+    <section>
+       
+        <h1>ラクガキ帳</h1>
+            <!-- 線の色を変更するHTML要素 id=color -->
+            <!-- 線の太さを変更するHTML要素 id=range-->
+            <button id="clear_btn">クリアー</button>
+            <button id="er">消しゴム</button>
+            <input id="col" type="color" value="#000000">色</input>
+            <input type="range" id="line" min="1" max="10" value="5">サイズ</input>
+
+        </nav>
+        <canvas id="drowarea" width="500" height="500" style="border:1px solid blue;"></canvas>
+    </section>
+
+
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <script>
+
+//デザイン
+$("#drowarea").css("background-color","white");
+        //初期化(変数letで宣言)
+        let canvas_mouse_event = false; //スイッチ [ true=線を引く, false=線は引かない ]  ＊＊＊
+        let oldX = 0; //１つ前の座標を代入するための変数
+        let oldY = 0; //１つ前の座標を代入するための変数
+        let bold_line = 3; //ラインの太さをここで指定 ここの変数を切り替える！スライダー値をいれる
+        let col = "#ccc"; //ラインの色をここで指定 id=colorの値をいれる
+
+        //------------------------------------------------
+        const can = $("#drowarea")[0]; //CanvasElement
+        const ctx = can.getContext("2d"); //描画するための準備！
+        //------------------------------------------------
+        
+
+
+        //mousedown：フラグをTrue
+        //-----------------------------------------------
+        //oldX = e.offsetX;       //MOUSEDOWNしたX横座標取得
+        //oldY = e.offsetY; //MOUSEDOWN Y高さ座標取得
+        //canvas_mouse_event=true;
+        //-----------------------------------------------
+        //上5つのスクリプトを記述します。
+        //canvasにマウスダウンイベント
+        $(can).on("mousedown",function(e){
+             oldX = e.offsetX;       //MOUSEDOWNしたX横座標取得
+             oldY = e.offsetY; //MOUSEDOWN Y高さ座標取得
+             canvas_mouse_event=true; //スイッチを入れる
+
+             if(oldX>can.width || oldX>can.height){
+                canvas_mouse_event=false
+            }
+        });
+
+
+        //mousemove：フラグがTrueだったら描く ※e：イベント引数取得
+        //----------------------------------------------
+        $(can).on("mousemove",function(e){ //マウスが動いてる間この中のイベントが実行される
+         if(canvas_mouse_event==true){
+             const px = e.offsetX;
+             const py = e.offsetY;
+             ctx.strokeStyle = col;   //#ccc
+             ctx.lineWidth = bold_line; //3
+             ctx.beginPath();           //座標を初期化
+             ctx.lineJoin= "round";     //ペン先が丸くなる
+             ctx.lineCap = "round";     //ペン先が丸くなる
+             ctx.moveTo(oldX, oldY);    //線の開始
+             ctx.lineTo(px, py);        //線の終了
+             ctx.stroke();              //線を引く
+             oldX = px;                 //新しい座標を古い座標に入れ替える
+             oldY = py;                 //新しい座標を古い座標に入れ替える
+         
+        }
+  
+        });
+
+        //色変更
+        $("#col").on("change", function(){
+            const v=$(this).val();
+           col=v;
+        })
+
+        //太さ変更
+        $("#line").on("change", function(){
+            const i=$(this).val();
+            bold_line=i;
+        })
+
+        //mouseup：フラグをfalse
+        //------------------------------------------------
+        //    canvas_mouse_event=false;
+        //------------------------------------------------
+        $(can).on("mouseup",function(){
+            canvas_mouse_event=false;
+        });
+
+
+        //#clear_btn：クリアーボタンAction
+        //-----------------------------------------------------------------
+        //    ctx.beginPath();
+        //    ctx.clearRect(0, 0, can.width, can.height);
+        //-----------------------------------------------------------------
+        $("#clear_btn").on("click",function(){
+         ctx.beginPath();
+         ctx.clearRect(0, 0, can.width, can.height);
+        });
+
+        
+
+        $("#er").on("click", function(){
+        col="#ffffff";
+        })
+      
+
+   
+        
+
+  
+  //塗り絵機能
+  //一度戻る
+  //枠から出たらfalseにする、キャンバスから出たときのイベント
+
+    </script>
+</body>
+
+</html>
